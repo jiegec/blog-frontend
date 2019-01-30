@@ -1,0 +1,15 @@
+[package]
+name = "blog-frontend"
+version = "0.1.0"
+authors = ["Jiajie Chen <jiegec@qq.com>"]
+edition = "2018"
+
+[dependencies]
+stdweb = "0.4.13"
+yew = "0.4.0"
+comrak = "0.4.0"
+regex = "1.1.0"
+serde = "1.0"
+serde_derive = "1.0"
+serde_yaml = "0.8"
+chrono = "0.4"
