@@ -1,13 +1,13 @@
+use chrono::prelude::DateTime;
 use comrak::{markdown_to_html, ComrakOptions};
+use serde_derive::Deserialize;
+use serde_yaml;
 use stdweb::js;
 use stdweb::web::*;
 use yew::format::*;
 use yew::prelude::*;
 use yew::services::fetch::*;
 use yew::virtual_dom::VNode;
-use serde_derive::Deserialize;
-use serde_yaml;
-use chrono::prelude::DateTime;
 
 type Context = ();
 
@@ -17,7 +17,7 @@ struct FrontMatter {
     date: String,
     tags: Vec<String>,
     category: String,
-    title: String
+    title: String,
 }
 
 pub struct Model {
@@ -70,7 +70,7 @@ impl Component<Context> for Model {
             Msg::GotData(string) => {
                 let index = (&string[2..].find("---").unwrap()) + 1;
                 self.front_matter = Some(serde_yaml::from_str(&string[..index]).unwrap());
-                self.content = String::from(&string[index+6..]);
+                self.content = String::from(&string[index + 6..]);
                 true
             }
             Msg::DoNothing => false,
