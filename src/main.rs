@@ -1,18 +1,12 @@
-#[macro_use]
-extern crate yew;
-#[macro_use]
-extern crate stdweb;
-extern crate serde_derive;
-extern crate serde_yaml;
 extern crate comrak;
 extern crate regex;
+extern crate serde_derive;
+extern crate serde_yaml;
 
 mod article;
 
 use stdweb::web::*;
-use yew::prelude::*;
-
-type Context = ();
+use yew::{html, html_impl, prelude::*};
 
 struct Model {
     article: Option<String>,
@@ -20,11 +14,11 @@ struct Model {
 
 enum Msg {}
 
-impl Component<Context> for Model {
+impl Component for Model {
     type Message = Msg;
     type Properties = ();
 
-    fn create(_: Self::Properties, _: &mut Env<Context, Self>) -> Self {
+    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
         let path_re =
             regex::Regex::new(r"^/([a-z]+)/(\d{4})/(\d{2})/(\d{2})/([a-z0-9-]+)/?$").unwrap();
         let location = window().location().unwrap();
@@ -41,13 +35,13 @@ impl Component<Context> for Model {
         }
     }
 
-    fn update(&mut self, _: Self::Message, _: &mut Env<Context, Self>) -> ShouldRender {
+    fn update(&mut self, _: Self::Message) -> ShouldRender {
         false
     }
 }
 
-impl Renderable<Context, Model> for Model {
-    fn view(&self) -> Html<Context, Self> {
+impl Renderable<Model> for Model {
+    fn view(&self) -> Html<Self> {
         if let Some(url) = &self.article {
             html! {
                 <div>
@@ -66,7 +60,7 @@ impl Renderable<Context, Model> for Model {
 
 fn main() {
     yew::initialize();
-    let app: App<_, Model> = App::new(());
+    let app: App<Model> = App::new();
     app.mount_to_body();
     yew::run_loop();
 }

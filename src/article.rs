@@ -1,4 +1,4 @@
-use chrono::prelude::DateTime;
+use chrono::DateTime;
 use comrak::{markdown_to_html, ComrakOptions};
 use serde_derive::Deserialize;
 use serde_yaml;
@@ -8,8 +8,7 @@ use yew::format::*;
 use yew::prelude::*;
 use yew::services::fetch::*;
 use yew::virtual_dom::VNode;
-
-type Context = ();
+use yew::{html, html_impl};
 
 #[derive(Debug, PartialEq, Deserialize)]
 struct FrontMatter {
@@ -37,13 +36,13 @@ pub enum Msg {
     DoNothing,
 }
 
-impl Component<Context> for Model {
+impl Component for Model {
     // Some details omitted. Explore the examples to get more.
 
     type Message = Msg;
     type Properties = Prop;
 
-    fn create(prop: Self::Properties, env: &mut Env<Context, Self>) -> Self {
+    fn create(prop: Self::Properties, mut env: ComponentLink<Self>) -> Self {
         let request = Request::get(&prop.article).body(Nothing).unwrap();
         let mut fetch = FetchService::new();
         let task = fetch.fetch(
@@ -65,7 +64,7 @@ impl Component<Context> for Model {
         }
     }
 
-    fn update(&mut self, msg: Self::Message, _: &mut Env<Context, Self>) -> ShouldRender {
+    fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
             Msg::GotData(string) => {
                 let index = (&string[2..].find("---").unwrap()) + 1;
@@ -78,8 +77,8 @@ impl Component<Context> for Model {
     }
 }
 
-impl Renderable<Context, Model> for Model {
-    fn view(&self) -> Html<Context, Self> {
+impl Renderable<Model> for Model {
+    fn view(&self) -> Html<Self> {
         if let Some(front_matter) = &self.front_matter {
             let content = markdown_to_html(&self.content, &ComrakOptions::default());
             let node = Node::from_html(&format!("<div>{}</div>", content)).unwrap();
