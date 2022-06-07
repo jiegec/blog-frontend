@@ -6,7 +6,7 @@ edition = "2018"
 
 [dependencies]
 stdweb = "0.4.20"
-yew = "0.5.0"
+yew = "0.11.0"
 comrak = "0.12.1"
 regex = "1.5.6"
 serde = "1.0.137"

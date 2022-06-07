@@ -1,12 +1,8 @@
-extern crate comrak;
-extern crate regex;
-extern crate serde_derive;
-extern crate serde_yaml;
-
+#![recursion_limit = "1024"]
 mod article;
 
 use stdweb::web::*;
-use yew::{html, html_impl, prelude::*};
+use yew::{html, prelude::*};
 
 struct Model {
     article: Option<String>,
@@ -38,10 +34,8 @@ impl Component for Model {
     fn update(&mut self, _: Self::Message) -> ShouldRender {
         false
     }
-}
 
-impl Renderable<Model> for Model {
-    fn view(&self) -> Html<Self> {
+    fn view(&self) -> Html {
         if let Some(url) = &self.article {
             html! {
                 <div>

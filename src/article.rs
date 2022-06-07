@@ -5,10 +5,10 @@ use serde_yaml;
 use stdweb::js;
 use stdweb::web::*;
 use yew::format::*;
+use yew::html;
 use yew::prelude::*;
 use yew::services::fetch::*;
 use yew::virtual_dom::VNode;
-use yew::{html, html_impl};
 
 #[derive(Debug, PartialEq, Deserialize)]
 struct FrontMatter {
@@ -26,7 +26,7 @@ pub struct Model {
     _task: FetchTask,
 }
 
-#[derive(Clone, Default, PartialEq)]
+#[derive(Clone, Default, PartialEq, Properties)]
 pub struct Prop {
     pub article: String,
 }
@@ -42,12 +42,12 @@ impl Component for Model {
     type Message = Msg;
     type Properties = Prop;
 
-    fn create(prop: Self::Properties, mut env: ComponentLink<Self>) -> Self {
+    fn create(prop: Self::Properties, env: ComponentLink<Self>) -> Self {
         let request = Request::get(&prop.article).body(Nothing).unwrap();
         let mut fetch = FetchService::new();
         let task = fetch.fetch(
             request,
-            env.send_back(|response: Response<Text>| {
+            env.callback(|response: Response<Text>| {
                 let (_, data) = response.into_parts();
                 if let Ok(markdown) = data {
                     Msg::GotData(markdown)
@@ -75,10 +75,7 @@ impl Component for Model {
             Msg::DoNothing => false,
         }
     }
-}
-
-impl Renderable<Model> for Model {
-    fn view(&self) -> Html<Self> {
+    fn view(&self) -> Html {
         if let Some(front_matter) = &self.front_matter {
             let content = markdown_to_html(&self.content, &ComrakOptions::default());
             let node = Node::from_html(&format!("<div>{}</div>", content)).unwrap();
